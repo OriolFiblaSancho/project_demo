@@ -1,5 +1,11 @@
 <html>
     <style>
+
+        @font-face {
+            font-family: 'monocraft';
+            src: url('fonts/Monocraft.ttf');
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -8,6 +14,8 @@
         }
 
         body {
+
+            height: 100%;
             display: flex;
             flex-direction: column;
 
@@ -55,6 +63,8 @@
         }
 
         .game img {
+
+
             width: 25%;
             height: 35%;
 
@@ -114,9 +124,6 @@
 
         .game .stats progress {
             border: 5px solid #ffffff;
-            
-            
-            
         }
 
         .game progress::-webkit-progress-bar {
@@ -127,6 +134,39 @@
             background-color: #ffffff;
         }
 
+        .game progress::-moz-progress-bar {
+            background-color: #000000;
+        }
+
+        .lvl {
+            display: flex;
+            justify-content: center;
+
+
+            width: 100%;
+            height: 10%;
+
+            color: #ffffff;
+            font-size: 1.5rem;
+
+            position: absolute;
+            top: 2.5rem;
+        }
+
+        .info {
+            display: flex;
+            justify-content: center;
+
+
+            width: 100%;
+            height: 10%;
+
+            color: #ffffff;
+            font-size: 1rem;
+
+            position: absolute;
+            top: 7rem;
+        }
 
         
     </style>
@@ -144,6 +184,15 @@
         </div>
 
         <div class="game">
+
+            <div class="lvl">
+                <h2>LVL 1</h2>
+            </div>
+
+            <div class="info">
+                <h2 id="info">ZzZ</h2>
+            </div>
+
             <img id="pet" src="img/sprites/sprite.png">
 
             <div class="buttons">
@@ -154,11 +203,11 @@
 
             <div class="stats">
                 <label for="hunger">Hunger</label>
-                <progress id="hunger" value="70" max="100"></progress>
+                <progress id="hunger" value="90" max="100"></progress>
                 <label for="boredom">Boredom</label>
-                <progress id="boredom" value="50" max="100"></progress>
+                <progress id="boredom" value="74" max="100"></progress>
                 <label for="sleepiness">Sleepiness</label>
-                <progress id="sleepiness" value="10" max="100"></progress>
+                <progress id="sleepiness" value="70" max="100"></progress>
             </div>
         </div>
     </body>
@@ -171,11 +220,8 @@
 
             boredom_value += 1;
             boredom.value = boredom_value;
-
-            sleepiness_value += 1;
-            sleepiness.value = sleepiness_value;
-
         }, 5000);
+
 
         const pet = document.getElementById('pet');
 
@@ -195,82 +241,126 @@
         const originalSrc = pet.src;
         
         let currentFrame = 0;
+        let animationOnGoing = 0;
 
         feed_button.addEventListener('click', () => {
+            document.getElementById("info").innerHTML = ""; 
+            if (animationOnGoing === 0){
+                animationOnGoing = 1;
 
-            boredom_value += 10;
-            boredom.value = boredom_value;
+                if (boredom_value < 100){
+                boredom_value += 10;
+                boredom.value = boredom_value;
+                }
+            
+                const animationFrames = [
+                "img/sprites/sprite_eat1.png",
+                "img/sprites/sprite_eat2.png"]
 
+                if (hunger_value < 100){
+                hunger_value += 10;
+                hunger.value = hunger_value;
+                }if (hunger_value >= 100){
+                    document.getElementById("info").innerHTML = "I'm full of soup";
+                }
+            
+                const animationInterval = setInterval(() => {
+                    pet.src = animationFrames[currentFrame];
+                    currentFrame=(currentFrame+1)%animationFrames.length;
+                }, 100);
 
-            const animationFrames = [
-            "img/sprites/sprite_eat1.png",
-            "img/sprites/sprite_eat2.png"]
-
-            hunger_value += 10;
-            hunger.value = hunger_value;
-        
-            const animationInterval = setInterval(() => {
-                pet.src = animationFrames[currentFrame];
-                currentFrame=(currentFrame+1)%animationFrames.length;
-            }, 100);
-
-            setTimeout(() => {
-                clearInterval(animationInterval);
-                pet.src = originalSrc;
-            }, 1000);
+                setTimeout(() => {
+                    clearInterval(animationInterval);
+                    pet.src = originalSrc;
+                    animationOnGoing = 0;
+                }, 1000);
+            }
+            
             
         });
 
 
         play_button.addEventListener('click', () => {
+            document.getElementById("info").innerHTML = "";
+            if (animationOnGoing === 0){
+                animationOnGoing = 1;
 
+                const animationFrames = [
+                "img/sprites/sprite_play1.png",
+                "img/sprites/sprite_play2.png",
+                "img/sprites/sprite_play3.png",
+                "img/sprites/sprite_play4.png"]
+                if (boredom_value >= 0){
+                boredom_value -= 10;
+                boredom.value = boredom_value;
+                }
 
-            const animationFrames = [
-            "img/sprites/sprite_play1.png",
-            "img/sprites/sprite_play2.png",
-            "img/sprites/sprite_play3.png",
-            "img/sprites/sprite_play4.png"]
+                if (hunger_value >= 0){
+                hunger_value -= 10;
+                hunger.value = hunger_value;
+                }
 
-            boredom_value -= 10;
-            boredom.value = boredom_value;
+                if (sleepiness_value < 100){
+                sleepiness_value += 10;
+                sleepiness.value = sleepiness_value;
 
-            sleepiness_value += 10;
-            sleepiness.value = sleepiness_value;
-        
-            const animationInterval = setInterval(() => {
-                pet.src = animationFrames[currentFrame];
-                currentFrame=(currentFrame+1)%animationFrames.length;
-            }, 100);
+                
+                }if(sleepiness_value >= 100){
+                    document.getElementById("info").innerHTML = "I'm too tired to play";
+                }
+            
+                const animationInterval = setInterval(() => {
+                    pet.src = animationFrames[currentFrame];
+                    currentFrame=(currentFrame+1)%animationFrames.length;
+                }, 100);
 
-            setTimeout(() => {
-                clearInterval(animationInterval);
-                pet.src = originalSrc;
-            }, 1000);
+                setTimeout(() => {
+                    clearInterval(animationInterval);
+                    pet.src = originalSrc;
+                    animationOnGoing = 0;
+                }, 1000);
+            }
             
         });
 
         sleep_button.addEventListener('click', () => {
-
-            boredom_value = boredom_value +(100 - boredom_value) ;
-            boredom.value = boredom_value;
-
-            sleepiness_value -= sleepiness_value;
-            sleepiness.value = sleepiness_value;
-
+            document.getElementById("info").innerHTML = "";
+            if (animationOnGoing === 0){
+            animationOnGoing = 1;
             const animationFrames = [
             "img/sprites/sprite_sleep1.png",
             "img/sprites/sprite_sleep2.png"]
 
             const animationInterval = setInterval(() => {
                 pet.src = animationFrames[currentFrame];
-                currentFrame=(currentFrame+1)%animationFrames.length;
+                currentFrame = (currentFrame + 1) % animationFrames.length;
+                if(boredom_value < 100){
+                boredom_value += 10;
+                boredom.value = boredom_value;
+                }
+                if (sleepiness_value >= 0){
+                sleepiness_value -= 10;
+                sleepiness.value = sleepiness_value;
+                document.getElementById("info").innerHTML += "z";
+                }else{
+                    stopAnimation();
+                }
             }, 1000);
 
-            setTimeout(() => {
+            const stopAnimation = () => {
+                document.getElementById("info").innerHTML = "";
                 clearInterval(animationInterval);
                 pet.src = originalSrc;
-            }, 5000);
+                animationOnGoing = 0;
+                play_button.removeEventListener('click', stopAnimation);
+                feed_button.removeEventListener('click', stopAnimation);
+            };
+
+            play_button.addEventListener('click', stopAnimation);
+            feed_button.addEventListener('click', stopAnimation);
+            }
             
+
         });
     </script>
 </html>
