@@ -1,7 +1,7 @@
 # VIRTUAL PET
 
 ## WEB
-You can try it in: [https://](https://oriol-fibla.itch.io/javagochi-demo)
+You can try it in: [itch.io](https://oriol-fibla.itch.io/javagochi-demo)
 
 ## Installation
 
